@@ -7,14 +7,18 @@ WORKDIR /src/app
 # to make npm test run only once non-interactively
 ENV CI=true
 
+# Install app dependencies
+COPY package.json /src/app/
+RUN npm install && \
+    npm install -g pushstate-server
+
 # Bundle app source
 COPY . /src/app
 
+# Build and optimize react app
+RUN npm run build
+
 EXPOSE 9000
 
-RUN cd /src/app && \
-	npm install && \
-    npm install -g pushstate-server
-
-# Build and optimize react app
-RUN npm start
+# defined in package.json
+CMD [ "npm", "run", "start:prod" ]
